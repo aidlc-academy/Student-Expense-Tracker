@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Expense Tracker</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- Storage-unavailable persistent banner -->
+  <div id="storage-banner" class="storage-banner" role="alert" hidden>
+    <span>⚠ Your browser cannot save data right now. Changes will be lost when you close this tab.</span>
+  </div>
+
+  <!-- App header and navigation -->
+  <header class="app-header">
+    <h1 class="app-title">Student Expense Tracker</h1>
+    <nav class="app-nav" aria-label="Main navigation">
+      <a href="#dashboard" class="nav-link">Dashboard</a>
+      <a href="#expenses" class="nav-link">Expenses</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ── Dashboard view ── -->
+    <section id="dashboard" aria-labelledby="dashboard-heading">
+      <h2 id="dashboard-heading" class="section-heading">Dashboard</h2>
+
+      <!-- Total amount summary card -->
+      <div class="summary-card" aria-label="Total amount spent">
+        <p class="summary-label">Total Amount Spent</p>
+        <p id="dashboard-total" class="summary-amount">₹0.00</p>
+      </div>
+
+      <!-- Recent expenses (up to 5) -->
+      <div class="recent-expenses">
+        <h3 class="recent-heading">Recent Expenses</h3>
+        <div id="dashboard-recent" aria-live="polite" aria-label="Recent expenses list">
+          <!-- Populated by render.js -->
+        </div>
+      </div>
+
+      <a href="#expenses" class="btn btn-link view-all-link">View All Expenses →</a>
+    </section>
+
+    <!-- ── Expense List view ── -->
+    <section id="expenses" aria-labelledby="expenses-heading" hidden>
+      <h2 id="expenses-heading" class="section-heading">Expenses</h2>
+
+      <!-- Add / Edit expense form -->
+      <div class="form-card">
+        <h3 class="form-heading" id="form-title">Add Expense</h3>
+        <form id="expense-form" novalidate aria-labelledby="form-title">
+
+          <div class="form-row">
+            <!-- Amount field -->
+            <div class="form-group">
+              <label for="amount-input">Amount <span aria-hidden="true">*</span></label>
+              <input
+                type="number"
+                id="amount-input"
+                name="amount"
+                min="0.01"
+                max="999999.99"
+                step="0.01"
+                placeholder="0.00"
+                aria-required="true"
+                aria-describedby="amount-error"
+              />
+              <span id="amount-error" class="field-error" role="alert" aria-live="assertive"></span>
+            </div>
+
+            <!-- Category field -->
+            <div class="form-group">
+              <label for="category-input">Category <span aria-hidden="true">*</span></label>
+              <select
+                id="category-input"
+                name="category"
+                aria-required="true"
+                aria-describedby="category-error"
+              >
+                <option value="">Select a category</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Books">Books</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Health">Health</option>
+                <option value="Other">Other</option>
+              </select>
+              <span id="category-error" class="field-error" role="alert" aria-live="assertive"></span>
+            </div>
+
+            <!-- Date field -->
+            <div class="form-group">
+              <label for="date-input">Date <span aria-hidden="true">*</span></label>
+              <input
+                type="date"
+                id="date-input"
+                name="date"
+                aria-required="true"
+                aria-describedby="date-error"
+              />
+              <span id="date-error" class="field-error" role="alert" aria-live="assertive"></span>
+            </div>
+          </div>
+
+          <!-- Description field (full width) -->
+          <div class="form-group form-group--full">
+            <label for="description-input">Description</label>
+            <input
+              type="text"
+              id="description-input"
+              name="description"
+              maxlength="250"
+              placeholder="What did you spend on? (optional)"
+              aria-describedby="description-error description-hint"
+            />
+            <span id="description-hint" class="field-hint">Max 250 characters</span>
+            <span id="description-error" class="field-error" role="alert" aria-live="assertive"></span>
+          </div>
+
+          <!-- Form actions -->
+          <div class="form-actions">
+            <button type="submit" id="save-btn" class="btn btn-primary">Save</button>
+            <button type="button" id="cancel-btn" class="btn btn-secondary">Cancel</button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Search and filter controls -->
+      <div class="list-controls">
+        <div class="search-wrap">
+          <label for="search-input" class="visually-hidden">Search expenses by description</label>
+          <input
+            type="search"
+            id="search-input"
+            name="search"
+            placeholder="Search by description…"
+            maxlength="200"
+            aria-label="Search expenses by description"
+          />
+        </div>
+
+        <div class="filter-wrap">
+          <label for="category-filter">Filter by category</label>
+          <select id="category-filter" name="category-filter" aria-label="Filter expenses by category">
+            <option value="All">All</option>
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Books">Books</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Health">Health</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Total amount for the current view (respects filter + search) -->
+      <div class="summary-bar" aria-label="Filtered total amount">
+        <span class="summary-bar__label">Total Amount Spent:</span>
+        <span id="list-total" class="summary-bar__amount">₹0.00</span>
+      </div>
+
+      <!-- Expense table / card list -->
+      <div id="expense-list" aria-live="polite" aria-label="Expense list" tabindex="-1">
+        <!-- Populated by render.js -->
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Delete confirmation dialog -->
+  <dialog id="confirm-dialog" aria-labelledby="confirm-dialog-heading" aria-describedby="confirm-dialog-body">
+    <h2 id="confirm-dialog-heading" class="dialog-heading">Delete Expense</h2>
+    <p id="confirm-dialog-body" class="dialog-body">
+      Are you sure you want to delete this expense? This action cannot be undone.
+    </p>
+    <p id="confirm-dialog-detail" class="dialog-detail"></p>
+    <div class="dialog-actions">
+      <button type="button" id="confirm-delete-btn" class="btn btn-danger">Delete</button>
+      <button type="button" id="cancel-delete-btn" class="btn btn-secondary">Cancel</button>
+    </div>
+  </dialog>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+
+  <!-- App entry point (loaded last; type=module defers automatically) -->
+  <script type="module" src="js/app.js"></script>
+
+</body>
+</html>

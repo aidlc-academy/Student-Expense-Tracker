@@ -1,0 +1,1139 @@
+/* ==========================================================================
+   Student Expense Tracker — CSS
+   Task 2.1: Design tokens & global styles
+   Task 2.2: Layout, component, and responsive styles
+   ========================================================================== */
+
+/* ==========================================================================
+   1. DESIGN TOKENS
+   Colour contrast notes (all pairs meet WCAG 2.1 AA):
+     --color-text (#1a1a2e) on --color-surface (#ffffff)  → ~18.1:1  ✓ AA
+     --color-text (#1a1a2e) on --color-bg (#f4f6fb)       → ~16.5:1  ✓ AA
+     --color-primary (#2563eb) on --color-surface (#fff)  →  ~5.9:1  ✓ AA
+     --color-primary-dark (#1d4ed8) on --color-bg         →  ~7.2:1  ✓ AA
+     --color-on-primary (#ffffff) on --color-primary      →  ~5.9:1  ✓ AA (large/bold)
+     --color-error (#b91c1c) on --color-surface (#fff)    →  ~7.3:1  ✓ AA
+     --color-text-muted (#4b5563) on --color-surface      →  ~7.2:1  ✓ AA
+   ========================================================================== */
+
+:root {
+  /* --- Colour palette --- */
+  --color-primary:       #2563eb;   /* Blue-600  — interactive elements     */
+  --color-primary-dark:  #1d4ed8;   /* Blue-700  — hover / active state     */
+  --color-primary-light: #dbeafe;   /* Blue-100  — subtle backgrounds       */
+  --color-surface:       #ffffff;   /* Card / panel background              */
+  --color-bg:            #f4f6fb;   /* Page background                      */
+  --color-error:         #b91c1c;   /* Red-700   — validation errors        */
+  --color-error-bg:      #fee2e2;   /* Red-100   — error field background   */
+  --color-success:       #15803d;   /* Green-700 — success toasts           */
+  --color-success-bg:    #dcfce7;   /* Green-100 — success toast background */
+  --color-warning:       #92400e;   /* Amber-800 — warning banners          */
+  --color-warning-bg:    #fef3c7;   /* Amber-100 — warning banner background*/
+  --color-border:        #d1d5db;   /* Gray-300  — input / card borders     */
+  --color-border-focus:  #2563eb;   /* Blue-600  — focus ring colour        */
+  --color-text:          #1a1a2e;   /* Near-black — body text               */
+  --color-text-muted:    #4b5563;   /* Gray-600  — secondary / helper text  */
+  --color-text-inverse:  #ffffff;   /* On dark/primary backgrounds          */
+
+  /* --- Typography --- */
+  --font-family-base:  "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-size-xs:      0.75rem;    /* 12 px */
+  --font-size-sm:      0.875rem;   /* 14 px */
+  --font-size-base:    1rem;       /* 16 px */
+  --font-size-lg:      1.125rem;   /* 18 px */
+  --font-size-xl:      1.25rem;    /* 20 px */
+  --font-size-2xl:     1.5rem;     /* 24 px */
+  --font-size-3xl:     1.875rem;   /* 30 px */
+  --font-weight-normal:  400;
+  --font-weight-medium:  500;
+  --font-weight-semibold: 600;
+  --font-weight-bold:    700;
+  --line-height-tight:  1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+
+  /* --- Spacing scale (multiples of 4 px) --- */
+  --space-1:   0.25rem;   /*  4 px */
+  --space-2:   0.5rem;    /*  8 px */
+  --space-3:   0.75rem;   /* 12 px */
+  --space-4:   1rem;      /* 16 px */
+  --space-5:   1.25rem;   /* 20 px */
+  --space-6:   1.5rem;    /* 24 px */
+  --space-8:   2rem;      /* 32 px */
+  --space-10:  2.5rem;    /* 40 px */
+  --space-12:  3rem;      /* 48 px */
+  --space-16:  4rem;      /* 64 px */
+
+  /* --- Border radius --- */
+  --radius-sm:   0.25rem;   /*  4 px */
+  --radius-base: 0.5rem;    /*  8 px */
+  --radius-lg:   0.75rem;   /* 12 px */
+  --radius-xl:   1rem;      /* 16 px */
+  --radius-full: 9999px;    /* pill  */
+
+  /* --- Shadows --- */
+  --shadow-sm:  0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-base: 0 1px 3px 0 rgb(0 0 0 / 0.10), 0 1px 2px -1px rgb(0 0 0 / 0.10);
+  --shadow-md:  0 4px 6px -1px rgb(0 0 0 / 0.10), 0 2px 4px -2px rgb(0 0 0 / 0.10);
+  --shadow-lg:  0 10px 15px -3px rgb(0 0 0 / 0.10), 0 4px 6px -4px rgb(0 0 0 / 0.10);
+
+  /* --- Transitions --- */
+  --transition-fast:   150ms ease;
+  --transition-base:   200ms ease;
+  --transition-slow:   300ms ease;
+
+  /* --- Touch target minimum (WCAG 2.1 SC 2.5.5) --- */
+  --min-touch-target: 44px;
+
+  /* --- Layout --- */
+  --container-max:   1100px;
+  --header-height:   64px;
+}
+
+/* ==========================================================================
+   2. CSS RESET
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure [hidden] attribute is always respected, even when component styles
+   set display to flex/grid/block. Using !important matches browser intent. */
+[hidden] {
+  display: none !important;
+}
+
+/* Remove list styles on ul/ol with role="list" (avoids VoiceOver quirk) */
+ul[role="list"],
+ol[role="list"] {
+  list-style: none;
+}
+
+/* Prevent font-size inflation on mobile */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Remove default button styles so we can apply our own consistently */
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+/* Inputs inherit font so they match body text */
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* Remove default link decoration where we override it */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Images are block-level by default to avoid inline spacing issues */
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* ==========================================================================
+   3. BASE / BODY STYLES
+   ========================================================================== */
+
+html {
+  font-size: 100%; /* 16 px base — honours user browser settings */
+}
+
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  min-height: 100vh;
+  /* Prevent horizontal scrollbar at any supported viewport width */
+  overflow-x: hidden;
+}
+
+/* Smooth focus outline for keyboard navigation */
+:focus-visible {
+  outline: 3px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Remove focus ring for pointer users (but keep for keyboard) */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text);
+}
+
+h1 { font-size: var(--font-size-3xl); }
+h2 { font-size: var(--font-size-2xl); }
+h3 { font-size: var(--font-size-xl);  }
+h4 { font-size: var(--font-size-lg);  }
+h5 { font-size: var(--font-size-base);}
+h6 { font-size: var(--font-size-sm);  }
+
+/* Paragraphs */
+p {
+  color: var(--color-text);
+  line-height: var(--line-height-relaxed);
+}
+
+/* ==========================================================================
+   LAYOUT, COMPONENT, AND RESPONSIVE STYLES  (Task 2.2)
+   ========================================================================== */
+
+/* --- Utility: visually hidden (for screen-reader-only labels) --- */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   HEADER / NAV BAR
+   ========================================================================== */
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+  min-height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: var(--space-6);
+  gap: var(--space-4);
+}
+
+.app-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-inverse);
+  white-space: nowrap;
+  /* Large text ≥ 18 px bold — contrast white on blue-600 ≥ 5.9:1 ✓ AA */
+}
+
+.app-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--min-touch-target);  /* ≥ 44 px touch target ✓ */
+  min-width: var(--min-touch-target);
+  padding-inline: var(--space-4);
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-inverse);
+  transition: background-color var(--transition-fast);
+  text-decoration: none;
+}
+
+.nav-link:hover,
+.nav-link:focus-visible {
+  background-color: var(--color-primary-dark);
+  outline: none;
+}
+
+.nav-link.is-active {
+  background-color: var(--color-primary-dark);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ==========================================================================
+   MAIN CONTENT AREA
+   ========================================================================== */
+
+main {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+  padding-block: var(--space-8);
+}
+
+/* ==========================================================================
+   VIEW / SECTION HEADINGS
+   ========================================================================== */
+
+.section-heading {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-6);
+}
+
+/* ==========================================================================
+   DASHBOARD SECTION
+   ========================================================================== */
+
+#dashboard {
+  display: grid;
+  gap: var(--space-6);
+}
+
+/* Summary / Total Amount card — gradient background */
+.summary-card {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-8);
+  color: var(--color-text-inverse);
+}
+
+.summary-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.85;
+  margin-bottom: var(--space-2);
+}
+
+.summary-amount {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+/* Recent Expenses panel */
+.recent-expenses {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-base);
+  padding: var(--space-6);
+}
+
+.recent-heading {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-4);
+}
+
+/* "View All Expenses" link — meets 44 px touch target */
+.view-all-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-base);
+  min-height: var(--min-touch-target);
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.view-all-link:hover,
+.view-all-link:focus-visible {
+  color: var(--color-primary-dark);
+  background-color: var(--color-primary-light);
+  text-decoration: none;
+  outline: none;
+}
+
+/* ==========================================================================
+   EXPENSE ENTRY FORM
+   ========================================================================== */
+
+.form-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-base);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+
+.form-heading {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Form row — single column by default; becomes multi-column at 768 px */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+/* Individual field wrapper */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* Full-width field that spans all columns */
+.form-group--full {
+  grid-column: 1 / -1;
+}
+
+label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+/* All text inputs, selects, and the search input */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="search"],
+select,
+textarea {
+  width: 100%;
+  min-height: var(--min-touch-target);  /* ≥ 44 px touch target ✓ */
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+input[type="text"]:hover,
+input[type="number"]:hover,
+input[type="date"]:hover,
+input[type="search"]:hover,
+select:hover,
+textarea:hover {
+  border-color: var(--color-primary);
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="search"]:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.2);
+}
+
+/* Invalid state (added by JS validation) */
+input.is-invalid,
+select.is-invalid,
+textarea.is-invalid {
+  border-color: var(--color-error);
+  background-color: var(--color-error-bg);
+}
+
+input.is-invalid:focus,
+select.is-invalid:focus,
+textarea.is-invalid:focus {
+  box-shadow: 0 0 0 3px rgb(185 28 28 / 0.2);
+}
+
+/* Custom dropdown arrow */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%234b5563'%3E%3Cpath fill-rule='evenodd' d='M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-3) center;
+  background-size: 1.25rem;
+  padding-right: var(--space-10);
+  cursor: pointer;
+}
+
+textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+/* Inline field error message */
+.field-error {
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+  font-weight: var(--font-weight-medium);
+  min-height: 1em; /* Reserves vertical space to prevent layout shift */
+}
+
+.field-error:empty {
+  display: none;
+}
+
+/* Hint text below a field (e.g. "Max 250 characters") */
+.field-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* Form action buttons row */
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+/* ==========================================================================
+   BUTTONS
+   ========================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--min-touch-target);  /* ≥ 44 px touch target ✓ */
+  min-width: var(--min-touch-target);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-5);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-base);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* Primary — blue fill, white text. Contrast ≥ 5.9:1 ✓ AA */
+.btn-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+.btn-primary:active {
+  background-color: #1e40af; /* Blue-800 */
+  border-color: #1e40af;
+}
+
+/* Secondary — outlined, transparent fill */
+.btn-secondary {
+  background-color: transparent;
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.btn-secondary:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+/* Danger — red fill, white text. Contrast ≥ 7.3:1 ✓ AA */
+.btn-danger {
+  background-color: var(--color-error);
+  border-color: var(--color-error);
+  color: var(--color-text-inverse);
+}
+
+.btn-danger:hover {
+  background-color: #991b1b; /* Red-800 */
+  border-color: #991b1b;
+}
+
+/* Link-style button (e.g. "View All Expenses") */
+.btn-link {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--color-primary);
+  padding-inline: var(--space-2);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.btn-link:hover {
+  color: var(--color-primary-dark);
+  background-color: var(--color-primary-light);
+  text-decoration: none;
+}
+
+/* Ghost / icon-only inline actions */
+.btn-ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--color-text-muted);
+  padding-inline: var(--space-3);
+}
+
+.btn-ghost:hover {
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+.btn-ghost.btn-danger-ghost:hover {
+  color: var(--color-error);
+  background-color: var(--color-error-bg);
+}
+
+/* ==========================================================================
+   SEARCH & FILTER CONTROLS
+   ========================================================================== */
+
+.list-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.search-wrap {
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.filter-wrap {
+  flex: 0 1 200px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* ==========================================================================
+   TOTAL / SUMMARY BAR (Expense List view)
+   ========================================================================== */
+
+.summary-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  margin-bottom: var(--space-4);
+  font-weight: var(--font-weight-semibold);
+}
+
+.summary-bar__label {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.summary-bar__amount {
+  font-size: var(--font-size-xl);
+  color: var(--color-text);
+}
+
+/* ==========================================================================
+   EXPENSE LIST — RESPONSIVE TABLE
+   Desktop (≥ 768 px): standard horizontal table.
+   Mobile (< 768 px): stacked "card" rows using data-label pseudo-elements.
+   Using a single table avoids duplicate action buttons in the DOM.
+   ========================================================================== */
+
+/* Table wrapper — horizontal scroll guard with rounded corners */
+.expense-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-base);
+}
+
+.expense-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--color-surface);
+  font-size: var(--font-size-sm);
+}
+
+.expense-table thead {
+  background-color: var(--color-bg);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.expense-table th {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.expense-table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+  vertical-align: middle;
+}
+
+.expense-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.expense-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.expense-table .col-amount {
+  font-weight: var(--font-weight-semibold);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.expense-table .col-actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Category badge */
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  /* Contrast: primary-dark (#1d4ed8) on primary-light (#dbeafe) ≥ 4.7:1 ✓ AA */
+  white-space: nowrap;
+}
+
+/* Legacy card container — kept for any markup that still references it but
+   never rendered by the current JS. */
+.expense-cards {
+  display: none;
+}
+
+.expense-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.expense-card + .expense-card {
+  margin-top: var(--space-3);
+}
+
+.expense-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.expense-card__amount {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.expense-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.expense-card__date {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.expense-card__description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.expense-card__actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+  margin-top: var(--space-1);
+}
+
+/* ==========================================================================
+   EMPTY STATE MESSAGE
+   ========================================================================== */
+
+.empty-state {
+  text-align: center;
+  padding: var(--space-12) var(--space-6);
+  color: var(--color-text-muted);
+}
+
+.empty-state__icon {
+  width: 3rem;
+  height: 3rem;
+  margin-inline: auto;
+  margin-bottom: var(--space-4);
+  opacity: 0.4;
+}
+
+.empty-state__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+.empty-state__body {
+  font-size: var(--font-size-sm);
+  max-width: 30ch;
+  margin-inline: auto;
+}
+
+/* ==========================================================================
+   TOAST NOTIFICATION
+   ========================================================================== */
+
+.toast {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 240px;
+  max-width: min(400px, calc(100vw - var(--space-8)));
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-base);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+  border-left: 4px solid var(--color-success);
+  /* Contrast: success (#15803d) on success-bg (#dcfce7) ≥ 4.6:1 ✓ AA */
+
+  /* Hidden by default (HTML hidden attr); JS removes it and adds .is-visible */
+  opacity: 0;
+  transform: translateY(var(--space-4));
+  transition:
+    opacity var(--transition-slow),
+    transform var(--transition-slow);
+  pointer-events: none;
+}
+
+/* JS removes [hidden] then triggers this class on next frame */
+.toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Override for error / warning toasts */
+.toast--error {
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+  border-left-color: var(--color-error);
+}
+
+.toast--warning {
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning);
+  border-left-color: var(--color-warning);
+}
+
+/* ==========================================================================
+   STORAGE-UNAVAILABLE BANNER
+   ========================================================================== */
+
+.storage-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-6);
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning);
+  /* Contrast: warning (#92400e) on warning-bg (#fef3c7) ≥ 7.5:1 ✓ AA */
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border-bottom: 1px solid #fde68a;
+}
+
+/* HTML uses the [hidden] attribute to hide it; no extra class needed */
+
+/* ==========================================================================
+   CONFIRMATION DIALOG
+   ========================================================================== */
+
+dialog {
+  border: none;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-8);
+  max-width: min(480px, calc(100vw - var(--space-8)));
+  width: 100%;
+  color: var(--color-text);
+  background-color: var(--color-surface);
+}
+
+dialog::backdrop {
+  background-color: rgb(0 0 0 / 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.dialog-heading {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-3);
+}
+
+.dialog-body {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+  line-height: var(--line-height-relaxed);
+}
+
+.dialog-detail {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  margin-bottom: var(--space-6);
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+/* ---- 768 px and up — tablet / desktop ---- */
+@media (min-width: 768px) {
+  main {
+    padding-inline: var(--space-6);
+  }
+
+  /* Three-column form row (amount | category | date) */
+  .form-row {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  /* Table header visible on tablet/desktop */
+  .expense-table thead {
+    display: table-header-group;
+  }
+
+  /* Dashboard: summary card beside recent expenses */
+  #dashboard {
+    grid-template-columns: 1fr 2fr;
+    align-items: start;
+  }
+
+  /* "View All" link sits below in the grid — span both columns */
+  #dashboard > .view-all-link {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---- 1280 px and up — desktop: centred 1100 px container ---- */
+@media (min-width: 1280px) {
+  main {
+    padding-inline: var(--space-8);
+    padding-block: var(--space-10);
+  }
+}
+
+/* ---- Below 768 px — mobile / small viewport (≥ 375 px) ---- */
+@media (max-width: 767px) {
+  .app-header {
+    padding-inline: var(--space-4);
+  }
+
+  .app-title {
+    font-size: var(--font-size-base);
+  }
+
+  .nav-link {
+    font-size: var(--font-size-xs);
+    padding-inline: var(--space-3);
+  }
+
+  main {
+    padding-inline: var(--space-4);
+    padding-block: var(--space-6);
+  }
+
+  .form-card {
+    padding: var(--space-4);
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+
+  .list-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-wrap,
+  .filter-wrap {
+    flex: 1 1 auto;
+  }
+
+  /* --- Responsive table: stacked rows on mobile --- */
+  /* Hide the column headers (replaced by data-label pseudo-elements) */
+  .expense-table thead {
+    display: none;
+  }
+
+  /* Remove table layout; each row becomes a block "card" */
+  .expense-table,
+  .expense-table tbody,
+  .expense-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  /* Style each row as a card */
+  .expense-table tbody tr {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-base);
+    margin-bottom: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Each cell becomes a flex row: label on left, value on right */
+  .expense-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-1) 0;
+    border-bottom: none;
+    text-align: right;
+    font-size: var(--font-size-sm);
+  }
+
+  /* Inject the column label from data-label before each cell value */
+  .expense-table td[data-label]::before {
+    content: attr(data-label);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: var(--space-2);
+    white-space: nowrap;
+    text-align: left;
+    flex-shrink: 0;
+  }
+
+  /* Actions cell: full width, right-aligned buttons */
+  .expense-table .col-actions {
+    justify-content: flex-end;
+    padding-top: var(--space-2);
+    margin-top: var(--space-1);
+    border-top: 1px solid var(--color-border);
+  }
+
+  /* Remove the table wrapper border/radius on mobile */
+  .expense-table-wrapper {
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    overflow-x: visible;
+  }
+
+  .summary-bar {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .toast {
+    bottom: var(--space-4);
+    right: var(--space-4);
+    left: var(--space-4);
+    min-width: unset;
+  }
+
+  dialog {
+    margin: var(--space-4) auto;
+    max-width: unset;
+    width: calc(100% - var(--space-8));
+    padding: var(--space-6);
+  }
+
+  .dialog-actions {
+    flex-direction: column-reverse;
+  }
+
+  .dialog-actions .btn {
+    width: 100%;
+  }
+}

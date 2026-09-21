@@ -1,0 +1,20 @@
+{
+  "name": "student-expense-tracker",
+  "version": "1.0.0",
+  "description": "A vanilla HTML/CSS/JS SPA for tracking student expenses",
+  "type": "module",
+  "scripts": {
+    "test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:e2e": "playwright test",
+    "test": "npm run test:unit && npm run test:e2e"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "@playwright/test": "^1.49.1",
+    "@types/jest": "^29.5.14",
+    "fast-check": "^3.23.2",
+    "jest": "^29.7.0",
+    "jest-environment-node": "^29.7.0",
+    "serve": "^14.2.6"
+  }
+}
